@@ -8,6 +8,45 @@ import csv
 
 # --- MODELOS DE DATOS ---
 
+#--- FUNCIONES DE VALIDACION DE VARIABLES
+
+def validar_string(valor, nombre="variable"):
+    if not isinstance(valor, str):
+        return f"{nombre} debe ser un string."
+    if valor.strip() == "":
+        return f"{nombre} no puede estar vacío."
+    return None
+
+def validar_entero(valor, nombre="variable", min_val=None, max_val=None):
+    if not isinstance(valor, int):
+        return f"{nombre} debe ser un entero."
+    if min_val is not None and valor < min_val:
+        return f"{nombre} debe ser mayor o igual a {min_val}."
+    if max_val is not None and valor > max_val:
+        return f"{nombre} debe ser menor o igual a {max_val}."
+    return None
+
+def validar_float(valor, nombre="variable", positivo=False):
+    if not isinstance(valor, (int, float)):
+        return f"{nombre} debe ser un número (int o float)."
+    if positivo and valor <= 0:
+        return f"{nombre} debe ser mayor a 0."
+    return None
+
+def validar_booleano(valor, nombre="variable"):
+    if not isinstance(valor, bool):
+        return f"{nombre} debe ser booleano (True o False)."
+    return None
+
+def check_datos(nombre, edad, altura, activo):
+    errores = []
+
+    if (e := validar_string(nombre, "nombre")): errores.append(e)
+    if (e := validar_entero(edad, "edad", 0, 120)): errores.append(e)
+    if (e := validar_float(altura, "altura", positivo=True)): errores.append(e)
+    if (e := validar_booleano(activo, "activo")): errores.append(e)
+
+
 @dataclass
 class Nodo:
     nombre: str
@@ -155,3 +194,4 @@ class Planificador:
 if __name__ == "__main__":
     # Acá podrías cargar los CSV y hacer pruebas llamando a Planificador
     print("Sistema de transporte listo para procesar solicitudes.")
+
