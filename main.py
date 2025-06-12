@@ -79,5 +79,5 @@ def mostrar_horas_minutos(tiempo_horas):
     return f"{horas}h {minutos}m"
 
 
-if _name_ == "_main_":
-    main()
+if __name__ == "_main_":
+    main()

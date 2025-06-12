@@ -1,5 +1,5 @@
 class Solicitud:
-    def __init__(self, id_carga, peso_kg, origen, destino):
+    def _init_(self, id_carga, peso_kg, origen, destino):
         """
         Representa una solicitud de transporte de carga.
 
@@ -10,8 +10,8 @@ class Solicitud:
         self.destino = destino
 
 
-    def __str__(self):
-        return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg| "
+    def _str_(self):
+        return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg | "
                 f"Origen: {self.origen} ➜ Destino: {self.destino}")
 
 import csv
