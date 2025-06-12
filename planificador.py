@@ -1,3 +1,6 @@
+from vehiculo import Vehiculo
+
+
 class Planificador:
     def __init__(self, red, vehiculos):
         self.red = red
@@ -10,43 +13,56 @@ class Planificador:
     def evaluar_camino(self, camino, peso_kg):
         total_costo = 0
         total_tiempo = 0
+        primer_tramo = camino[0]
+        vehiculo: Vehiculo = self.seleccionar_vehiculo(primer_tramo.modo, peso_kg)
+        cantidad_viajes = int(-(-peso_kg // vehiculo.capacidad))  # redondeo hacia arriba
+        costo_por_peso = 0.0
+        for i in range(cantidad_viajes):
+            if i < cantidad_viajes - 1:
+                peso_envio = vehiculo.capacidad
+            else:
+                peso_envio = peso_kg % vehiculo.capacidad
+            costo_por_peso += vehiculo.calcular_costo_por_peso(peso_envio)
+
+
         for tramo in camino:
-            vehiculo = self.seleccionar_vehiculo(tramo.modo, peso_kg)
             if vehiculo is None or not tramo.es_valida_para(vehiculo, peso_kg):
                 raise Exception("Vehículo no válido para este tramo.")
 
             # calcular número de viajes necesarios
-            cantidad_viajes = -(-peso_kg // vehiculo.capacidad)  # redondeo hacia arriba
-            costo_total_tramo = cantidad_viajes * vehiculo.calcular_costo(tramo.distancia, peso_kg)
-            tiempo_tramo = tramo.distancia / min(vehiculo.velocidad, tramo.restricciones.get("velocidad_maxima", vehiculo.velocidad))
+            tipo_camino = tramo.restricciones.get("tipo", None)
+            costo_total_tramo = vehiculo.calcular_costo_por_distancia(tramo.distancia, tipo_camino)
+            velocidad_maxima = tramo.restricciones.get("velocidad_max", vehiculo.velocidad)
+            velocidad = min(vehiculo.velocidad, velocidad_maxima)
+            tiempo_tramo = tramo.distancia / velocidad
 
-            total_costo += costo_total_tramo
+            total_costo += costo_total_tramo * cantidad_viajes
             total_tiempo += tiempo_tramo
 
+        total_costo += costo_por_peso
+
         return total_costo, total_tiempo
-    
 
-    def planificar(self, origen, destino, peso_kg, kpi="costo", modo=None):
-        caminos = self.red.buscar_caminos(origen, destino, modo)
+    def planificar(self, origen, destino, peso_kg, kpi="costo"):
+        modos_disponibles = ["automotor", "ferroviaria", "aerea", "fluvial"]
+        # modos_disponibles = ["fluvial"]
         mejores = []
+        for modo in modos_disponibles:
+            caminos = self.red.buscar_caminos(origen, destino, modo)
 
-        for camino in caminos:
-            try:
-                costo, tiempo = self.evaluar_camino(camino, peso_kg)
-                mejores.append((camino, costo, tiempo))
-            except:
-                continue  # descartar caminos inválidos
+            for camino in caminos:
+                try:
+                    costo, tiempo = self.evaluar_camino(camino, peso_kg)
+                    mejores.append((camino, costo, tiempo))
+                except:
+                    continue  # descartar caminos inválidos
 
         if not mejores:
             return None
 
         if kpi == "costo":
             return min(mejores, key=lambda x: x[1])
-        else:
+        elif kpi == "tiempo":
             return min(mejores, key=lambda x: x[2])
-        # if kpi == "costo":
-        #     return min(mejores, key=lambda x: x[1])  # retornar el camino con menor costo
-        # else:
-        #     return min(mejores, key=lambda x: x[2])  # retornar el camino con menor tiempo
-        # return mejores  # retornar todos los caminos con sus costos y tiempos Esto seria una opcion
-        
+        else:
+            raise ValueError("KPI no válido. Debe ser 'costo' o 'tiempo'.")
