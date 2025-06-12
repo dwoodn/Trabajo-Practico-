@@ -40,6 +40,7 @@ class Conexion:
 bahia = Nodo("Bahía Blanca")
 laplata = Nodo("La Plata")
 
+
 # Crear una conexión ferroviaria con límite de velocidad
 conexion_ferro = Conexion(
     origen=bahia,
@@ -52,4 +53,5 @@ conexion_ferro = Conexion(
 # Asociar la conexión a los nodos
 bahia.agregar_conexion(conexion_ferro)
 laplata.agregar_conexion(conexion_ferro)
+# Imprimir información de la conexión
 

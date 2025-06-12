@@ -194,4 +194,5 @@ class Planificador:
 if __name__ == "__main__":
     # Acá podrías cargar los CSV y hacer pruebas llamando a Planificador
     print("Sistema de transporte listo para procesar solicitudes.")
+    
 

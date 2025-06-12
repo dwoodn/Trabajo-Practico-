@@ -11,7 +11,7 @@ class Solicitud:
 
 
     def __str__(self):
-        return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg | "
+        return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg| "
                 f"Origen: {self.origen} ➜ Destino: {self.destino}")
 
 import csv

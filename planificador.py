@@ -24,6 +24,7 @@ class Planificador:
             total_tiempo += tiempo_tramo
 
         return total_costo, total_tiempo
+    
 
     def planificar(self, origen, destino, peso_kg, kpi="costo", modo=None):
         caminos = self.red.buscar_caminos(origen, destino, modo)
@@ -43,3 +44,9 @@ class Planificador:
             return min(mejores, key=lambda x: x[1])
         else:
             return min(mejores, key=lambda x: x[2])
+        # if kpi == "costo":
+        #     return min(mejores, key=lambda x: x[1])  # retornar el camino con menor costo
+        # else:
+        #     return min(mejores, key=lambda x: x[2])  # retornar el camino con menor tiempo
+        # return mejores  # retornar todos los caminos con sus costos y tiempos Esto seria una opcion
+        
