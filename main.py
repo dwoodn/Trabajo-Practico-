@@ -6,7 +6,7 @@ from redtransporte import RedTransporte
 from vehiculos_especializados import (
     VehiculoFerroviario,
     VehiculoAutomotor,
-    VehiculoMaritimo,
+    VehiculoFluvial,
     VehiculoAereo
 )
 from planificador import Planificador
@@ -33,8 +33,8 @@ def main():
     vehiculos = [
         VehiculoFerroviario("Tren de carga"),
         VehiculoAutomotor("Camión estándar"),
-        VehiculoMaritimo("Barco fluvial", tipo="fluvial"),
-        VehiculoMaritimo("Barco marítimo", tipo="marítimo"),
+        VehiculoFluvial("Barco fluvial", tipo="fluvial"),
+        VehiculoFluvial("Barco marítimo", tipo="marítimo"),
         VehiculoAereo("Avión de carga"),
     ]
 
@@ -47,24 +47,37 @@ def main():
     # Procesar cada solicitud
     for s in solicitudes:
         print(f"\nProcesando solicitud: {s}")
-        resultado = planificador.planificar(
-            origen=s.origen,
-            destino=s.destino,
-            peso_kg=s.peso_kg,
-            kpi="costo",
-            modo=None
-        )
+        resultado = planificador.planificar(origen=s.origen, destino=s.destino, peso_kg=s.peso_kg, kpi="costo")
 
         if resultado:
             camino, costo_total, tiempo_total = resultado
             nombres = " -> ".join([c.origen.nombre for c in camino] + [camino[-1].destino.nombre])
-            print(f"Camino encontrado: {nombres}")
+            print(f"Camino encontrado: modo {camino[0].modo} -> {nombres}")
             print(f"Costo total: ${costo_total:.2f}")
-            print(f"Tiempo total: {tiempo_total:.2f} h")
+            # print(f"Tiempo total: {mostrar_horas_minutos(tiempo_total)}")
         else:
             print("No se encontró un camino válido para esta solicitud.")
 
 
-if __name__ == "__main__":
-    main()
+    for s in solicitudes:
+        print(f"\nProcesando solicitud: {s}")
+        resultado = planificador.planificar(origen=s.origen, destino=s.destino, peso_kg=s.peso_kg, kpi="tiempo")
 
+        if resultado:
+            camino, costo_total, tiempo_total = resultado
+            nombres = " -> ".join([c.origen.nombre for c in camino] + [camino[-1].destino.nombre])
+            print(f"Camino encontrado: modo {camino[0].modo} -> {nombres}")
+            # print(f"Costo total: ${costo_total:.2f}")
+            print(f"Tiempo total: {mostrar_horas_minutos(tiempo_total)}")
+        else:
+            print("No se encontró un camino válido para esta solicitud.")
+
+
+def mostrar_horas_minutos(tiempo_horas):
+    horas = int(tiempo_horas)
+    minutos = int((tiempo_horas - horas) * 60)
+    return f"{horas}h {minutos}m"
+
+
+if _name_ == "_main_":
+    main()
