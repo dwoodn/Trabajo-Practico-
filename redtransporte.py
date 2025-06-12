@@ -1,5 +1,5 @@
 class RedTransporte:
-    def __init__(self, nodos, conexiones):
+    def _init_(self, nodos, conexiones):
         self.nodos = nodos  # dict con nombre → Nodo
         self.conexiones = conexiones  # lista de todas las conexiones
 
