@@ -1,5 +1,5 @@
 class Solicitud:
-    def _init_(self, id_carga, peso_kg, origen, destino):
+    def __init__(self, id_carga, peso_kg, origen, destino):
         """
         Representa una solicitud de transporte de carga.
 
