@@ -11,6 +11,7 @@ import csv
 #--- FUNCIONES DE VALIDACION DE VARIABLES
 
 def validar_string(valor, nombre="variable"):
+    #"" Validación de string ""
     if not isinstance(valor, str):
         return f"{nombre} debe ser un string."
     if valor.strip() == "":
