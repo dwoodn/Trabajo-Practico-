@@ -14,7 +14,6 @@ class Conexion:
     def es_valida_para(self, vehiculo, peso_envio):
         """
         Verifica si un vehículo puede transitar esta conexión para cierto peso.
-
         """
         if self.modo != vehiculo.modo:
             return False
