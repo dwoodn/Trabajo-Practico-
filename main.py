@@ -10,6 +10,11 @@ from vehiculos_especializados import (
     VehiculoAereo
 )
 from planificador import Planificador
+# Importar funciones de graficado
+from graficos_itinerarios import calcular_acumulados, graficar_distancia_vs_tiempo, graficar_costo_vs_distancia
+from graficar_rutas import graficar_grafo_matplotlib
+import matplotlib.pyplot as plt
+
 
 def main():
     # Leer nodos y conexiones desde archivos CSV
@@ -25,6 +30,17 @@ def main():
     print("\nCONEXIONES CARGADAS:")
     for conexion in conexiones:
         print(conexion)
+
+    # Graficar la red de transporte completa solo con matplotlib
+    print("\nGenerando gráfico de la red de transporte...")
+    coordenadas = {
+        'Zarate': (1, 5),
+        'Buenos_Aires': (5, 8),
+        'Junin': (3, 2),
+        'Azul': (7, 2),
+        'Mar_del_Plata': (10, 1),
+    }
+    graficar_grafo_matplotlib(nodos, conexiones, coordenadas)
 
     # Crear red de transporte
     red = RedTransporte(nodos, conexiones)
@@ -71,6 +87,44 @@ def main():
             print(f"Tiempo total: {mostrar_horas_minutos(tiempo_total)}")
         else:
             print("No se encontró un camino válido para esta solicitud.")
+
+# --- GRAFICAR SOLO LOS 5 MEJORES CAMINOS (MENOR COSTO) PARA CADA SOLICITUD ---
+    for s in solicitudes:
+        print(f"\nGenerando gráficos para solicitud: {s.origen} -> {s.destino} (peso: {s.peso_kg} kg)")
+        caminos = red.buscar_caminos(s.origen, s.destino)
+        if not caminos:
+            print("No hay caminos posibles para esta solicitud.")
+            continue
+        # Calcular costo total de cada camino
+        caminos_con_costos = []
+        for camino in caminos:
+            try:
+                dist_acum, tiempo_acum, costo_acum, _ = calcular_acumulados(camino, vehiculos, s.peso_kg)
+                costo_total = costo_acum[-1]
+                caminos_con_costos.append((camino, dist_acum, tiempo_acum, costo_acum, costo_total))
+            except Exception as e:
+                print(f"Camino descartado por error: {e}")
+                continue
+        # Ordenar por menor costo total y tomar los 5 mejores
+        caminos_con_costos.sort(key=lambda x: x[4])
+        mejores = caminos_con_costos[:5]
+        if not mejores:
+            print("No hay caminos válidos para graficar.")
+            continue
+        # Gráfico 1: Distancia acumulada vs Tiempo acumulado
+        plt.figure(figsize=(10, 5))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total) in enumerate(mejores):
+            graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx)
+        plt.title(f"Distancia acumulada vs Tiempo acumulado\n{s.origen} -> {s.destino}")
+        plt.tight_layout()
+        plt.show()
+        # Gráfico 2: Costo acumulado vs Distancia acumulada
+        plt.figure(figsize=(10, 5))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total) in enumerate(mejores):
+            graficar_costo_vs_distancia(dist_acum, costo_acum, idx)
+        plt.title(f"Costo acumulado vs Distancia acumulada\n{s.origen} -> {s.destino}")
+        plt.tight_layout()
+        plt.show()
 
 
 def mostrar_horas_minutos(tiempo_horas):
