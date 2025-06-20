@@ -1,4 +1,4 @@
-from nodo import Nodo
+from nodo import Nodo 
 from conexion import Conexion
 from lectura_archivo import LecturaArchivos
 from solicitud import leer_solicitudes_csv
@@ -34,7 +34,7 @@ def main():
         VehiculoFerroviario("Tren de carga"),
         VehiculoAutomotor("Camión estándar"),
         VehiculoFluvial("Barco fluvial", tipo="fluvial"),
-        VehiculoFluvial("Barco marítimo", tipo="marítimo"),
+        VehiculoFluvial("Barco maritimo", tipo="maritimo"),
         VehiculoAereo("Avión de carga"),
     ]
 

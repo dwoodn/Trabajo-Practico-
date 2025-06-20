@@ -3,15 +3,6 @@ class Vehiculo:
                  costo_base, costo_por_km, costo_por_kg):
         """
         Crea un vehículo con sus características operativas.
-
-        Args:
-            nombre (str): nombre del modelo del vehículo
-            modo (str): tipo de transporte (automotor, ferroviario, aéreo, marítimo)
-            velocidad_kmh (float): velocidad nominal del vehículo
-            capacidad_kg (float): carga máxima que puede transportar
-            costo_base (float): costo fijo por tramo
-            costo_por_km (float): costo variable por kilómetro
-            costo_por_kg (float): costo variable por kilo transportado
         """
         self.nombre = nombre
         self.modo = modo.lower()
