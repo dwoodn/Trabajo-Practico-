@@ -1,81 +1,105 @@
 from vehiculo import Vehiculo
+# constantes (no num mag)
+
+FERROVIARIO_UMBRAL_DISTANCIA = 200
+FERROVIARIO_COSTO_EXTRA = 20
+
+AUTOMOTOR_UMBRAL_PESO = 15000
+AUTOMOTOR_COSTO_BAJO = 1
+AUTOMOTOR_COSTO_ALTO = 2
+
+# Paso 1: Reemplazar parámetros estáticos por atributos configurables 
 
 class VehiculoFerroviario(Vehiculo):
-    def __init__(self, nombre):
+    def __init__(self, nombre,
+                 velocidad_kmh=100,
+                 capacidad_kg=150000,
+                 costo_base=100,
+                 costo_por_km=15,
+                 costo_por_kg=3):
         super().__init__(
             nombre=nombre,
             modo="ferroviaria",
-            velocidad_kmh=100,
-            capacidad_kg=150000,
-            costo_base=100,
-            costo_por_km=15,
-            costo_por_kg=3
+            velocidad_kmh=velocidad_kmh,
+            capacidad_kg=capacidad_kg,
+            costo_base=costo_base,
+            costo_por_km=costo_por_km,
+            costo_por_kg=costo_por_kg
         )
+def calcular_costo_por_distancia(self, distancia_km, tipo=None):
+    costo_km = FERROVIARIO_COSTO_EXTRA if distancia_km < FERROVIARIO_UMBRAL_DISTANCIA else self.costo_km
+    return self.costo_base + (costo_km * distancia_km)
 
-    def calcular_costo_por_peso(self, peso_kg):
-        return self.costo_kg * peso_kg
-
-    def calcular_costo_por_distancia(self, distancia_km, tipo=None):
-        costo_km = 20 if distancia_km < 200 else self.costo_km
-        return self.costo_base + (costo_km * distancia_km)
 
 class VehiculoAutomotor(Vehiculo):
-    def __init__(self, nombre):
+    def __init__(self, nombre,
+                 velocidad_kmh=80,
+                 capacidad_kg=30000,
+                 costo_base=30,
+                 costo_por_km=5,
+                 costo_por_kg=0):
         super().__init__(
             nombre=nombre,
             modo="automotor",
-            velocidad_kmh=80,
-            capacidad_kg=30000,
-            costo_base=30,
-            costo_por_km=5,
-            costo_por_kg=0  
+            velocidad_kmh=velocidad_kmh,
+            capacidad_kg=capacidad_kg,
+            costo_base=costo_base,
+            costo_por_km=costo_por_km,
+            costo_por_kg=costo_por_kg
         )
 
     def calcular_costo_por_peso(self, peso_kg):
-        costo_unitario = 1 if peso_kg < 15000 else 2
-        return costo_unitario * peso_kg
+        costo_kg_unitario = AUTOMOTOR_COSTO_BAJO if peso_kg < AUTOMOTOR_UMBRAL_PESO else AUTOMOTOR_COSTO_ALTO
+        return costo_kg_unitario * peso_kg
+
+    def calcular_costo_por_distancia(self, distancia_km, tipo=None):
+        return self.costo_base + (self.costo_km * distancia_km)
+
 
 class VehiculoFluvial(Vehiculo):
-    def __init__(self, nombre, tipo="fluvial"):
+    def __init__(self, nombre, tipo="fluvial",
+                 velocidad_kmh=40,
+                 capacidad_kg=100000,
+                 costo_por_km=15,
+                 costo_por_kg=2):
+
         if tipo == "fluvial":
             costo_base = 500
         elif tipo == "maritimo":
             costo_base = 1500
         else:
-            raise ValueError("Tipo inválido. Use 'fluvial' o 'maritimo'.")
+            raise ValueError("Tipo de vehículo fluvial no reconocido. Use 'fluvial' o 'maritimo'.")
 
         super().__init__(
             nombre=nombre,
-            modo=tipo,  
-            velocidad_kmh=40,
-            capacidad_kg=100000,
+            modo=tipo,
+            velocidad_kmh=velocidad_kmh,
+            capacidad_kg=capacidad_kg,
             costo_base=costo_base,
-            costo_por_km=15,
-            costo_por_kg=2
+            costo_por_km=costo_por_km,
+            costo_por_kg=costo_por_kg
         )
-
-    def calcular_costo_por_peso(self, peso_kg):
-        return self.costo_kg * peso_kg
 
     def calcular_costo_por_distancia(self, distancia_km, tipo=None):
         return self.costo_base + (self.costo_km * distancia_km)
 
+
 class VehiculoAereo(Vehiculo):
-    def __init__(self, nombre):
+    def __init__(self, nombre,
+                 velocidad_kmh=600,
+                 capacidad_kg=5000,
+                 costo_base=750,
+                 costo_por_km=40,
+                 costo_por_kg=10):
         super().__init__(
             nombre=nombre,
             modo="aerea",
-            velocidad_kmh=600,
-            capacidad_kg=5000,
-            costo_base=750,
-            costo_por_km=40,
-            costo_por_kg=10
+            velocidad_kmh=velocidad_kmh,
+            capacidad_kg=capacidad_kg,
+            costo_base=costo_base,
+            costo_por_km=costo_por_km,
+            costo_por_kg=costo_por_kg
         )
-
-    def calcular_costo_por_peso(self, peso_kg):
-        return self.costo_kg * peso_kg
 
     def calcular_costo_por_distancia(self, distancia_km, tipo=None):
         return self.costo_base + (self.costo_km * distancia_km)
-
-
