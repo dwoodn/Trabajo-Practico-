@@ -9,8 +9,10 @@ class RedTransporte:
         Si se pasa un modo, solo considera conexiones de ese tipo.
         """
         caminos = []
+        self._dfs (origen,destino,modo, max_nivel, [], {origen}, caminos)
+        return caminos
 
-        def dfs(actual, camino, visitados):
+    def _dfs(self, actual, destino, modo, max_nivel, camino, visitados, caminos):
             if actual == destino:
                 caminos.append(list(camino))
                 return
@@ -22,8 +24,5 @@ class RedTransporte:
                 siguiente = conexion.destino.nombre
                 if siguiente not in visitados:
                     camino.append(conexion)
-                    dfs(siguiente, camino, visitados | {siguiente})
+                    self._dfs(siguiente, destino, modo, max_nivel, camino, visitados | {siguiente}, caminos)
                     camino.pop()
-
-        dfs(origen, [], {origen})
-        return caminos
