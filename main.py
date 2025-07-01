@@ -10,7 +10,8 @@ from vehiculos_especializados import (
     VehiculoFluvial,
     VehiculoAereo
 )
-from planificador import Planificador
+from planificador_costo import PlanificadorPorCosto
+from planificador_tiempo import PlanificadorPorTiempo
 # Importar funciones de graficado
 from graficos_itinerarios import calcular_acumulados, graficar_distancia_vs_tiempo, graficar_costo_vs_distancia
 from graficar_rutas import graficar_grafo_matplotlib
@@ -55,15 +56,18 @@ def main():
     ]
 
     # Instanciar planificador
-    planificador = Planificador(red, vehiculos)
+    planificador_costo = PlanificadorPorCosto(red, vehiculos)
+    planificador_tiempo = PlanificadorPorTiempo(red, vehiculos)
 
     # Leer solicitudes desde CSV
     solicitudes = leer_solicitudes_csv("archivos_ejemplo/solicitudes.csv")
 
     # Procesar cada solicitud
+    # por  costo
+
     for s in solicitudes:
         print(f"\nProcesando solicitud: {s}")
-        resultado = planificador.planificar(origen=s.origen, destino=s.destino, peso_kg=s.peso_kg, kpi="costo")
+        resultado = planificador_costo.planificar(s.origen, s.destino, s.peso_kg)
 
         if resultado:
             camino, costo_total, tiempo_total = resultado
@@ -74,10 +78,11 @@ def main():
         else:
             print("No se encontró un camino válido para esta solicitud.")
 
-
+# por tiempo
+ 
     for s in solicitudes:
         print(f"\nProcesando solicitud: {s}")
-        resultado = planificador.planificar(origen=s.origen, destino=s.destino, peso_kg=s.peso_kg, kpi="tiempo")
+        resultado = planificador_tiempo.planificar(s.origen, s.destino, s.peso_kg)
 
         if resultado:
             camino, costo_total, tiempo_total = resultado

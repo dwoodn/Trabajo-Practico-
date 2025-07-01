@@ -1,7 +1,7 @@
 from vehiculo import Vehiculo
+from abc import ABC, abstractmethod
 
-
-class Planificador:
+class Planificador(ABC):
     def __init__(self, red, vehiculos):
         self.red = red
         self.vehiculos = vehiculos  # lista de instancias de Vehiculo
@@ -20,13 +20,12 @@ class Planificador:
             raise Exception("No se encontró un vehículo para el modo de transporte.")
 
         cantidad_viajes = int(-(-peso_kg // vehiculo.capacidad))  # redondeo hacia arriba
-        costo_por_peso = 0.0
-
-        for i in range(cantidad_viajes):
-            peso_envio = vehiculo.capacidad if i < cantidad_viajes - 1 else peso_kg % vehiculo.capacidad
-            if peso_envio == 0:
-                peso_envio = vehiculo.capacidad
-            costo_por_peso += vehiculo.calcular_costo_por_peso(peso_envio)
+        costo_por_peso = sum(
+            vehiculo.calcular_costo_por_peso(
+                vehiculo.capacidad if i < cantidad_viajes - 1 else peso_kg % vehiculo.capacidad or vehiculo.capacidad
+            )
+            for i in range(cantidad_viajes)
+        )
 
         for tramo in camino:
             if not tramo.es_valida_para(vehiculo, peso_kg):
@@ -34,7 +33,6 @@ class Planificador:
 
             tipo_camino = tramo.restricciones.get("tipo", None)
             costo_total_tramo = vehiculo.calcular_costo_por_distancia(tramo.distancia, tipo_camino)
-
             velocidad_maxima = tramo.restricciones.get("velocidad_max", vehiculo.velocidad)
             velocidad = min(vehiculo.velocidad, velocidad_maxima)
             tiempo_tramo = tramo.distancia / velocidad
@@ -45,26 +43,6 @@ class Planificador:
         total_costo += costo_por_peso
         return total_costo, total_tiempo
 
-    def planificar(self, origen, destino, peso_kg, kpi="costo"):
-        modos_disponibles = ["automotor", "ferroviaria", "aerea", "fluvial"]
-        mejores = []
-
-        for modo in modos_disponibles:
-            caminos = self.red.buscar_caminos(origen, destino, modo)
-
-            for camino in caminos:
-                try:
-                    costo, tiempo = self.evaluar_camino(camino, peso_kg)
-                    mejores.append((camino, costo, tiempo))
-                except:
-                    continue  # descartar caminos inválidos
-
-        if not mejores:
-            return None
-
-        if kpi == "costo":
-            return min(mejores, key=lambda x: x[1])
-        elif kpi == "tiempo":
-            return min(mejores, key=lambda x: x[2])
-        else:
-            raise ValueError("KPI no válido. Debe ser 'costo' o 'tiempo'.")
+    @abstractmethod
+    def planificar(self, origen, destino, peso_kg):
+        pass
