@@ -17,7 +17,7 @@ class Planificador(ABC):
 
         vehiculo: Vehiculo = self.seleccionar_vehiculo(primer_tramo.modo, peso_kg)
         if vehiculo is None:
-            raise Exception("No se encontró un vehículo para el modo de transporte.")
+            raise ValueError("No se encontró un vehículo para el modo de transporte.")
 
         cantidad_viajes = int(-(-peso_kg // vehiculo.capacidad))  # redondeo hacia arriba
         costo_por_peso = sum(
@@ -29,7 +29,7 @@ class Planificador(ABC):
 
         for tramo in camino:
             if not tramo.es_valida_para(vehiculo, peso_kg):
-                raise Exception("Vehículo no válido para este tramo.")
+                raise ValueError("Vehículo no válido para este tramo.")
 
             tipo_camino = tramo.restricciones.get("tipo", None)
             costo_total_tramo = vehiculo.calcular_costo_por_distancia(tramo.distancia, tipo_camino)
