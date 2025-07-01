@@ -1,6 +1,6 @@
+import csv
 from nodo import Nodo
 from conexion import Conexion
-import csv
 
 class LecturaArchivos:
     def __init__(self):

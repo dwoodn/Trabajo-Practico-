@@ -21,7 +21,7 @@ def graficar_grafo_matplotlib(nodos, conexiones, coordenadas):
     grupos_modos = {
         'Automotor': ['automotor'],
         'Ferroviario': ['ferroviaria'],
-        'Fluvial + Marítimo': ['fluvial', 'maritimo'],
+        'Fluvial + Maritimo': ['fluvial', 'maritimo'],
         'Aéreo': ['aerea']
     }
     

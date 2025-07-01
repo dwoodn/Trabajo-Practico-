@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from nodo import Nodo 
 from conexion import Conexion
 from lectura_archivo import LecturaArchivos
@@ -13,7 +14,6 @@ from planificador import Planificador
 # Importar funciones de graficado
 from graficos_itinerarios import calcular_acumulados, graficar_distancia_vs_tiempo, graficar_costo_vs_distancia
 from graficar_rutas import graficar_grafo_matplotlib
-import matplotlib.pyplot as plt
 
 
 def main():

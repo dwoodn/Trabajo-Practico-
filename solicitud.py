@@ -1,3 +1,5 @@
+import csv
+
 class Solicitud:
     def __init__(self, id_carga, peso_kg, origen, destino):
         """
@@ -13,7 +15,6 @@ class Solicitud:
         return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg | "
                 f"Origen: {self.origen} ➜ Destino: {self.destino}")
 
-import csv
 
 def leer_solicitudes_csv(ruta_archivo):
     solicitudes = []

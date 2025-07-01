@@ -109,7 +109,7 @@ if __name__ == "__main__":
         VehiculoFerroviario("Tren de carga"),
         VehiculoAutomotor("Camión estándar"),
         VehiculoFluvial("Barco fluvial", tipo="fluvial"),
-        VehiculoFluvial("Barco marítimo", tipo="marítimo"),
+        VehiculoFluvial("Barco maritimo", tipo="maritimo"),
         VehiculoAereo("Avión de carga"),
     ]
     # Parámetros de ejemplo
