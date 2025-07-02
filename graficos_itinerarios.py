@@ -20,16 +20,49 @@ def ajustar_posicion_etiqueta(x, y, posiciones_usadas, min_dist=0.1):
             return dx, dy
     return 10, 10  # posición por defecto si no se encuentra una mejor
 
-def graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modo_transporte=None):
+def graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modos=None):
     """
     Grafica la distancia acumulada vs tiempo acumulado para un camino.
     Los puntos representan las ciudades intermedias del recorrido.
     """
     # Usar un estilo de línea diferente para cada camino
     estilos_linea = ['-', '--', ':', '-.', '-']
+    
+    # Crear etiqueta con información del modo de transporte
+    if modos:
+        # Si hay múltiples modos, mostrar la secuencia completa preservando el orden
+        if len(modos) > 1:
+            # Crear una secuencia que muestre el orden real de los modos
+            secuencia_modos = []
+            modo_actual = modos[0]
+            contador = 1
+            
+            for i in range(1, len(modos)):
+                if modos[i] == modo_actual:
+                    contador += 1
+                else:
+                    if contador > 1:
+                        secuencia_modos.append(f"{modo_actual}({contador})")
+                    else:
+                        secuencia_modos.append(modo_actual)
+                    modo_actual = modos[i]
+                    contador = 1
+            
+            # Agregar el último modo
+            if contador > 1:
+                secuencia_modos.append(f"{modo_actual}({contador})")
+            else:
+                secuencia_modos.append(modo_actual)
+            
+            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia_modos)})'
+        else:
+            etiqueta = f'Camino {idx+1} ({modos[0]})'
+    else:
+        etiqueta = f'Camino {idx+1}'
+    
     plt.plot(tiempo_acum, dist_acum, 
              linestyle=estilos_linea[idx % len(estilos_linea)],
-             marker='o', label=f'Camino {idx+1}', linewidth=2)
+             marker='o', label=etiqueta, linewidth=2)
     
     plt.xlabel('Tiempo acumulado (horas)')
     plt.ylabel('Distancia acumulada (km)')
@@ -37,16 +70,49 @@ def graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modo_transporte=No
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
-def graficar_costo_vs_distancia(dist_acum, costo_acum, idx, modo_transporte=None):
+def graficar_costo_vs_distancia(dist_acum, costo_acum, idx, modos=None):
     """
     Grafica el costo acumulado vs distancia acumulada para un camino.
     Los puntos representan las ciudades intermedias del recorrido.
     """
     # Usar un estilo de línea diferente para cada camino
     estilos_linea = ['-', '--', ':', '-.', '-']
+    
+    # Crear etiqueta con información del modo de transporte
+    if modos:
+        # Si hay múltiples modos, mostrar la secuencia completa preservando el orden
+        if len(modos) > 1:
+            # Crear una secuencia que muestre el orden real de los modos
+            secuencia_modos = []
+            modo_actual = modos[0]
+            contador = 1
+            
+            for i in range(1, len(modos)):
+                if modos[i] == modo_actual:
+                    contador += 1
+                else:
+                    if contador > 1:
+                        secuencia_modos.append(f"{modo_actual}({contador})")
+                    else:
+                        secuencia_modos.append(modo_actual)
+                    modo_actual = modos[i]
+                    contador = 1
+            
+            # Agregar el último modo
+            if contador > 1:
+                secuencia_modos.append(f"{modo_actual}({contador})")
+            else:
+                secuencia_modos.append(modo_actual)
+            
+            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia_modos)})'
+        else:
+            etiqueta = f'Camino {idx+1} ({modos[0]})'
+    else:
+        etiqueta = f'Camino {idx+1}'
+    
     plt.plot(dist_acum, costo_acum, 
              linestyle=estilos_linea[idx % len(estilos_linea)],
-             marker='o', label=f'Camino {idx+1}', linewidth=2)
+             marker='o', label=etiqueta, linewidth=2)
     
     plt.xlabel('Distancia acumulada (km)')
     plt.ylabel('Costo acumulado ($)')

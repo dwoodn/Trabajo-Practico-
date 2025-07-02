@@ -104,9 +104,9 @@ def main():
         caminos_con_costos = []
         for camino in caminos:
             try:
-                dist_acum, tiempo_acum, costo_acum, _ = calcular_acumulados(camino, vehiculos, s.peso_kg)
+                dist_acum, tiempo_acum, costo_acum, modos = calcular_acumulados(camino, vehiculos, s.peso_kg)
                 costo_total = costo_acum[-1]
-                caminos_con_costos.append((camino, dist_acum, tiempo_acum, costo_acum, costo_total))
+                caminos_con_costos.append((camino, dist_acum, tiempo_acum, costo_acum, costo_total, modos))
             except Exception as e:
                 print(f"Camino descartado por error: {e}")
                 continue
@@ -117,16 +117,16 @@ def main():
             print("No hay caminos válidos para graficar.")
             continue
         # Gráfico 1: Distancia acumulada vs Tiempo acumulado
-        plt.figure(figsize=(10, 5))
-        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total) in enumerate(mejores):
-            graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx)
+        plt.figure(figsize=(12, 6))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, modos) in enumerate(mejores):
+            graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modos)
         plt.title(f"Distancia acumulada vs Tiempo acumulado\n{s.origen} -> {s.destino}")
         plt.tight_layout()
         plt.show()
         # Gráfico 2: Costo acumulado vs Distancia acumulada
-        plt.figure(figsize=(10, 5))
-        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total) in enumerate(mejores):
-            graficar_costo_vs_distancia(dist_acum, costo_acum, idx)
+        plt.figure(figsize=(12, 6))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, modos) in enumerate(mejores):
+            graficar_costo_vs_distancia(dist_acum, costo_acum, idx, modos)
         plt.title(f"Costo acumulado vs Distancia acumulada\n{s.origen} -> {s.destino}")
         plt.tight_layout()
         plt.show()
