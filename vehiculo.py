@@ -1,6 +1,6 @@
 class Vehiculo:
-    def __init__(self, nombre, modo, velocidad_kmh, capacidad_kg,
-                 costo_base, costo_por_km, costo_por_kg):
+    def __init__(self, nombre: str, modo: str, velocidad_kmh: int, capacidad_kg: int,
+                 costo_base: float, costo_por_km: float, costo_por_kg: float):
         """
         Crea un vehículo con sus características operativas.
         """

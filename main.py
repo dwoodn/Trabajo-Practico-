@@ -49,10 +49,14 @@ def main():
     # Crear vehículos disponibles
     vehiculos = [
         VehiculoFerroviario("Tren de carga"),
+        VehiculoFerroviario("Trochita", velocidad_kmh=50, capacidad_kg=10000, costo_base=10, costo_por_km=500, costo_por_kg=2),
         VehiculoAutomotor("Camión estándar"),
+        VehiculoAutomotor("Camioneta", velocidad_kmh=60, capacidad_kg=4000, costo_base=25, costo_por_km=4, costo_por_kg=0.5),
         VehiculoFluvial("Barco fluvial", tipo="fluvial"),
+        VehiculoFluvial("Lancha", tipo="fluvial", velocidad_kmh=70, capacidad_kg=2000, costo_por_km=10, costo_por_kg=1.5),
         VehiculoFluvial("Barco maritimo", tipo="maritimo"),
         VehiculoAereo("Avión de carga"),
+        VehiculoAereo("Avioneta", velocidad_kmh=200, capacidad_kg=500, costo_base=400, costo_por_km=20, costo_por_kg=5),
     ]
 
     # Instanciar planificador
@@ -64,7 +68,6 @@ def main():
 
     # Procesar cada solicitud
     # por  costo
-
     for s in solicitudes:
         print(f"\nProcesando solicitud: {s}")
         resultado = planificador_costo.planificar(s.origen, s.destino, s.peso_kg)
@@ -78,8 +81,7 @@ def main():
         else:
             print("No se encontró un camino válido para esta solicitud.")
 
-# por tiempo
- 
+    # por tiempo
     for s in solicitudes:
         print(f"\nProcesando solicitud: {s}")
         resultado = planificador_tiempo.planificar(s.origen, s.destino, s.peso_kg)
@@ -93,7 +95,36 @@ def main():
         else:
             print("No se encontró un camino válido para esta solicitud.")
 
-# --- GRAFICAR SOLO LOS 5 MEJORES CAMINOS (MENOR COSTO) PARA CADA SOLICITUD ---
+    # --- PROCESAR SOLICITUDES MANUALES ADICIONALES ---
+    solicitudes_adicionales = [
+        {"id": "CARGA_001", "origen": "Zarate", "destino": "Mar_del_Plata", "peso_kg": 70000},
+        {"id": "CARGA_002", "origen": "Mar_del_Plata", "destino": "Junin", "peso_kg": 100000},
+    ]
+
+    for s in solicitudes_adicionales:
+        print(f"\nProcesando solicitud manual: {s['id']} ({s['origen']} -> {s['destino']}, {s['peso_kg']} kg)")
+
+        # Por costo
+        resultado_costo = planificador_costo.planificar(s['origen'], s['destino'], s['peso_kg'])
+        if resultado_costo:
+            camino, costo_total, tiempo_total = resultado_costo
+            nombres = " -> ".join([c.origen.nombre for c in camino] + [camino[-1].destino.nombre])
+            print(f"[Costo] Camino encontrado: modo {camino[0].modo} -> {nombres}")
+            print(f"[Costo] Costo total: ${costo_total:.2f}")
+        else:
+            print("[Costo] No se encontró un camino válido para esta solicitud.")
+
+        # Por tiempo
+        resultado_tiempo = planificador_tiempo.planificar(s['origen'], s['destino'], s['peso_kg'])
+        if resultado_tiempo:
+            camino, costo_total, tiempo_total = resultado_tiempo
+            nombres = " -> ".join([c.origen.nombre for c in camino] + [camino[-1].destino.nombre])
+            print(f"[Tiempo] Camino encontrado: modo {camino[0].modo} -> {nombres}")
+            print(f"[Tiempo] Tiempo total: {mostrar_horas_minutos(tiempo_total)}")
+        else:
+            print("[Tiempo] No se encontró un camino válido para esta solicitud.")
+
+    # --- GRAFICAR SOLO LOS 5 MEJORES CAMINOS (MENOR COSTO) PARA CADA SOLICITUD ---
     for s in solicitudes:
         print(f"\nGenerando gráficos para solicitud: {s.origen} -> {s.destino} (peso: {s.peso_kg} kg)")
         caminos = red.buscar_caminos(s.origen, s.destino)
