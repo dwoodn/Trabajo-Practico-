@@ -35,9 +35,14 @@ class LecturaArchivos:
                 destino = self.nodos.get(destino_nombre)
             
                 if origen and destino:
+                    # Conexión original
                     conexion = Conexion(origen, destino, modo, distancia, restricciones)
                     self.conexiones.append(conexion)
                     origen.agregar_conexion(conexion)
+                    # Conexión inversa (bidireccional)
+                    conexion_inversa = Conexion(destino, origen, modo, distancia, restricciones)
+                    self.conexiones.append(conexion_inversa)
+                    destino.agregar_conexion(conexion_inversa)
 
 
     def obtener_red(self):
