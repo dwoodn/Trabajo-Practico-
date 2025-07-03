@@ -4,17 +4,13 @@ from conexion import Conexion
 from lectura_archivo import LecturaArchivos
 from solicitud import leer_solicitudes_csv
 from redtransporte import RedTransporte
-from vehiculos_especializados import (
-    VehiculoFerroviario,
-    VehiculoAutomotor,
-    VehiculoFluvial,
-    VehiculoAereo
-)
+from vehiculos_modelos import Trochita, Camioneta, Lancha, Avioneta
 from planificador_costo import PlanificadorPorCosto
 from planificador_tiempo import PlanificadorPorTiempo
 # Importar funciones de graficado
 from graficos_itinerarios import calcular_acumulados, graficar_distancia_vs_tiempo, graficar_costo_vs_distancia
 from graficar_rutas import graficar_grafo_matplotlib
+from vehiculos_especializados import VehiculoFerroviario, VehiculoAutomotor, VehiculoFluvial, VehiculoAereo
 
 
 def main():
@@ -49,14 +45,14 @@ def main():
     # Crear vehículos disponibles
     vehiculos = [
         VehiculoFerroviario("Tren de carga"),
-        VehiculoFerroviario("Trochita", velocidad_kmh=50, capacidad_kg=10000, costo_base=10, costo_por_km=500, costo_por_kg=2),
+        Trochita(),
         VehiculoAutomotor("Camión estándar"),
-        VehiculoAutomotor("Camioneta", velocidad_kmh=60, capacidad_kg=4000, costo_base=25, costo_por_km=4, costo_por_kg=0.5),
+        Camioneta(),
         VehiculoFluvial("Barco fluvial", tipo="fluvial"),
-        VehiculoFluvial("Lancha", tipo="fluvial", velocidad_kmh=70, capacidad_kg=2000, costo_por_km=10, costo_por_kg=1.5),
+        Lancha(),
         VehiculoFluvial("Barco maritimo", tipo="maritimo"),
         VehiculoAereo("Avión de carga"),
-        VehiculoAereo("Avioneta", velocidad_kmh=200, capacidad_kg=500, costo_base=400, costo_por_km=20, costo_por_kg=5),
+        Avioneta(),
     ]
 
     # Instanciar planificador
