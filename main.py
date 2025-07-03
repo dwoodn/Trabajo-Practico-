@@ -162,6 +162,38 @@ def main():
         plt.tight_layout()
         plt.show()
 
+    # --- OPTIMIZAR POR VEHÍCULO ESPECÍFICO PARA CARGA_001 Y CARGA_002 ---
+    print("\n--- OPTIMIZACIÓN POR VEHÍCULO ESPECÍFICO (CARGA_001 y CARGA_002) ---")
+    cargas = [
+        {"id": "CARGA_001", "origen": "Zarate", "destino": "Mar_del_Plata", "peso_kg": 70000},
+        {"id": "CARGA_002", "origen": "Mar_del_Plata", "destino": "Junin", "peso_kg": 100000},
+    ]
+    for carga in cargas:
+        print(f"\nCarga: {carga['id']} ({carga['origen']} -> {carga['destino']}, {carga['peso_kg']} kg)")
+        mejor_costo = None
+        mejor_tiempo = None
+        vehiculo_costo = None
+        vehiculo_tiempo = None
+        for v in vehiculos:
+            planificador = type(planificador_costo)(red, [v])
+            resultado = planificador.planificar(carga['origen'], carga['destino'], carga['peso_kg'])
+            if resultado:
+                camino, costo_total, tiempo_total = resultado
+                if mejor_costo is None or costo_total < mejor_costo:
+                    mejor_costo = costo_total
+                    vehiculo_costo = v
+                if mejor_tiempo is None or tiempo_total < mejor_tiempo:
+                    mejor_tiempo = tiempo_total
+                    vehiculo_tiempo = v
+        if vehiculo_costo:
+            print(f"Vehículo óptimo por COSTO: {vehiculo_costo.nombre} (Costo: ${mejor_costo:.2f})")
+        else:
+            print("No hay vehículo válido para minimizar COSTO.")
+        if vehiculo_tiempo:
+            print(f"Vehículo óptimo por TIEMPO: {vehiculo_tiempo.nombre} (Tiempo: {mostrar_horas_minutos(mejor_tiempo)})")
+        else:
+            print("No hay vehículo válido para minimizar TIEMPO.")
+
 
 def mostrar_horas_minutos(tiempo_horas):
     horas = int(tiempo_horas)
