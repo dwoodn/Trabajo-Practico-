@@ -20,100 +20,78 @@ def ajustar_posicion_etiqueta(x, y, posiciones_usadas, min_dist=0.1):
             return dx, dy
     return 10, 10  # posición por defecto si no se encuentra una mejor
 
-def graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modos=None):
+def graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, vehiculos_usados=None):
     """
     Grafica la distancia acumulada vs tiempo acumulado para un camino.
     Los puntos representan las ciudades intermedias del recorrido.
     """
-    # Usar un estilo de línea diferente para cada camino
     estilos_linea = ['-', '--', ':', '-.', '-']
-    
-    # Crear etiqueta con información del modo de transporte
-    if modos:
-        # Si hay múltiples modos, mostrar la secuencia completa preservando el orden
-        if len(modos) > 1:
-            # Crear una secuencia que muestre el orden real de los modos
-            secuencia_modos = []
-            modo_actual = modos[0]
+    if vehiculos_usados:
+        if len(vehiculos_usados) > 1:
+            secuencia = []
+            actual = vehiculos_usados[0]
             contador = 1
-            
-            for i in range(1, len(modos)):
-                if modos[i] == modo_actual:
+            for i in range(1, len(vehiculos_usados)):
+                if vehiculos_usados[i] == actual:
                     contador += 1
                 else:
                     if contador > 1:
-                        secuencia_modos.append(f"{modo_actual}({contador})")
+                        secuencia.append(f"{actual}({contador})")
                     else:
-                        secuencia_modos.append(modo_actual)
-                    modo_actual = modos[i]
+                        secuencia.append(actual)
+                    actual = vehiculos_usados[i]
                     contador = 1
-            
-            # Agregar el último modo
             if contador > 1:
-                secuencia_modos.append(f"{modo_actual}({contador})")
+                secuencia.append(f"{actual}({contador})")
             else:
-                secuencia_modos.append(modo_actual)
-            
-            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia_modos)})'
+                secuencia.append(actual)
+            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia)})'
         else:
-            etiqueta = f'Camino {idx+1} ({modos[0]})'
+            etiqueta = f'Camino {idx+1} ({vehiculos_usados[0]})'
     else:
         etiqueta = f'Camino {idx+1}'
-    
     plt.plot(tiempo_acum, dist_acum, 
              linestyle=estilos_linea[idx % len(estilos_linea)],
              marker='o', label=etiqueta, linewidth=2)
-    
     plt.xlabel('Tiempo acumulado (horas)')
     plt.ylabel('Distancia acumulada (km)')
     plt.title('Progreso de la carga en el tiempo\nCada punto representa una ciudad del recorrido')
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
-def graficar_costo_vs_distancia(dist_acum, costo_acum, idx, modos=None):
+def graficar_costo_vs_distancia(dist_acum, costo_acum, idx, vehiculos_usados=None):
     """
     Grafica el costo acumulado vs distancia acumulada para un camino.
     Los puntos representan las ciudades intermedias del recorrido.
     """
-    # Usar un estilo de línea diferente para cada camino
     estilos_linea = ['-', '--', ':', '-.', '-']
-    
-    # Crear etiqueta con información del modo de transporte
-    if modos:
-        # Si hay múltiples modos, mostrar la secuencia completa preservando el orden
-        if len(modos) > 1:
-            # Crear una secuencia que muestre el orden real de los modos
-            secuencia_modos = []
-            modo_actual = modos[0]
+    if vehiculos_usados:
+        if len(vehiculos_usados) > 1:
+            secuencia = []
+            actual = vehiculos_usados[0]
             contador = 1
-            
-            for i in range(1, len(modos)):
-                if modos[i] == modo_actual:
+            for i in range(1, len(vehiculos_usados)):
+                if vehiculos_usados[i] == actual:
                     contador += 1
                 else:
                     if contador > 1:
-                        secuencia_modos.append(f"{modo_actual}({contador})")
+                        secuencia.append(f"{actual}({contador})")
                     else:
-                        secuencia_modos.append(modo_actual)
-                    modo_actual = modos[i]
+                        secuencia.append(actual)
+                    actual = vehiculos_usados[i]
                     contador = 1
-            
-            # Agregar el último modo
             if contador > 1:
-                secuencia_modos.append(f"{modo_actual}({contador})")
+                secuencia.append(f"{actual}({contador})")
             else:
-                secuencia_modos.append(modo_actual)
-            
-            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia_modos)})'
+                secuencia.append(actual)
+            etiqueta = f'Camino {idx+1} ({" → ".join(secuencia)})'
         else:
-            etiqueta = f'Camino {idx+1} ({modos[0]})'
+            etiqueta = f'Camino {idx+1} ({vehiculos_usados[0]})'
     else:
         etiqueta = f'Camino {idx+1}'
-    
     plt.plot(dist_acum, costo_acum, 
              linestyle=estilos_linea[idx % len(estilos_linea)],
              marker='o', label=etiqueta, linewidth=2)
-    
     plt.xlabel('Distancia acumulada (km)')
     plt.ylabel('Costo acumulado ($)')
     plt.title('Evolución del costo según la distancia recorrida\nCada punto representa una ciudad del recorrido')
@@ -127,41 +105,33 @@ def calcular_acumulados(camino, vehiculos, peso_kg):
     - tiempos acumulados
     - costos acumulados
     usando la lógica de selección de vehículo y cálculo de tu código.
+    Además, devuelve la lista de nombres de vehículos usados en cada tramo.
     """
     dist_acum = [0]
     tiempo_acum = [0]
     costo_acum = [0]
-    modos = []  # Lista para guardar el modo de cada tramo
+    vehiculos_usados = []  # Lista para guardar el nombre del vehículo de cada tramo
     total_dist = 0
     total_tiempo = 0
     total_costo = 0
-    
     for conexion in camino:
-        # Seleccionar vehículo adecuado
         vehiculo = next((v for v in vehiculos if v.modo == conexion.modo), None)
         if vehiculo is None:
             raise Exception(f"No hay vehículo para modo {conexion.modo}")
-            
-        # Guardar el modo de transporte
-        modos.append(conexion.modo)
-        
-        # Cálculo de tiempo y costo
+        vehiculos_usados.append(vehiculo.nombre)
         distancia = conexion.distancia
         tipo = conexion.restricciones.get('tipo', None)
         costo = vehiculo.calcular_costo_por_distancia(distancia, tipo=tipo)
         costo += vehiculo.calcular_costo_por_peso(peso_kg)
         velocidad = min(vehiculo.velocidad, conexion.restricciones.get("velocidad_maxima", vehiculo.velocidad))
         tiempo = distancia / velocidad
-        
-        # Acumulados
         total_dist += distancia
         total_tiempo += tiempo
         total_costo += costo
         dist_acum.append(total_dist)
         tiempo_acum.append(total_tiempo)
         costo_acum.append(total_costo)
-        
-    return dist_acum, tiempo_acum, costo_acum, modos
+    return dist_acum, tiempo_acum, costo_acum, vehiculos_usados
 
 # Ejemplo de uso
 if __name__ == "__main__":
@@ -186,14 +156,14 @@ if __name__ == "__main__":
     # Graficar todos los caminos
     plt.figure(figsize=(10, 5))
     for idx, camino in enumerate(caminos):
-        dist_acum, tiempo_acum, costo_acum, modos = calcular_acumulados(camino, vehiculos, peso_kg)
-        graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, modos)
+        dist_acum, tiempo_acum, costo_acum, vehiculos_usados = calcular_acumulados(camino, vehiculos, peso_kg)
+        graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, vehiculos_usados)
     plt.tight_layout()
     plt.show()
 
     plt.figure(figsize=(10, 5))
     for idx, camino in enumerate(caminos):
-        dist_acum, tiempo_acum, costo_acum, modos = calcular_acumulados(camino, vehiculos, peso_kg)
-        graficar_costo_vs_distancia(dist_acum, costo_acum, idx, modos)
+        dist_acum, tiempo_acum, costo_acum, vehiculos_usados = calcular_acumulados(camino, vehiculos, peso_kg)
+        graficar_costo_vs_distancia(dist_acum, costo_acum, idx, vehiculos_usados)
     plt.tight_layout()
     plt.show()
