@@ -10,10 +10,8 @@ class Solicitud:
         self.origen = origen
         self.destino = destino
 
-
-    def _str_(self):
-        return (f"Carga ID: {self.id_carga} | Peso: {self.peso_kg} kg | "
-                f"Origen: {self.origen} ➜ Destino: {self.destino}")
+    def __str__(self):
+        return f"{self.id_carga}: {self.origen} -> {self.destino} ({self.peso_kg} kg)"
 
 
 def leer_solicitudes_csv(ruta_archivo):
