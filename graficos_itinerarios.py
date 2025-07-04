@@ -106,6 +106,7 @@ def calcular_acumulados(camino, vehiculos, peso_kg):
     - costos acumulados
     usando la lógica de selección de vehículo y cálculo de tu código.
     Además, devuelve la lista de nombres de vehículos usados en cada tramo.
+    Para cada tramo, selecciona el vehículo óptimo (menor costo total para ese tramo).
     """
     dist_acum = [0]
     tiempo_acum = [0]
@@ -115,17 +116,20 @@ def calcular_acumulados(camino, vehiculos, peso_kg):
     total_tiempo = 0
     total_costo = 0
     for conexion in camino:
-        vehiculo = next((v for v in vehiculos if v.modo == conexion.modo), None)
-        if vehiculo is None:
-            raise Exception(f"No hay vehículo para modo {conexion.modo}")
-        vehiculos_usados.append(vehiculo.nombre)
-        distancia = conexion.distancia
         tipo = conexion.restricciones.get('tipo', None)
-        costo = vehiculo.calcular_costo_por_distancia(distancia, tipo=tipo)
-        costo += vehiculo.calcular_costo_por_peso(peso_kg)
+        # Buscar el vehículo óptimo (menor costo total para este tramo)
+        vehiculo_costo = []
+        for v in vehiculos:
+            if v.modo == conexion.modo and conexion.es_valida_para(v, peso_kg):
+                costo = v.calcular_costo_por_distancia(conexion.distancia, tipo=tipo) + v.calcular_costo_por_peso(peso_kg)
+                vehiculo_costo.append((v, costo))
+        if not vehiculo_costo:
+            raise Exception(f"No hay vehículo válido para modo {conexion.modo}")
+        vehiculo, costo = min(vehiculo_costo, key=lambda x: x[1])
+        vehiculos_usados.append(vehiculo.nombre)
         velocidad = min(vehiculo.velocidad, conexion.restricciones.get("velocidad_maxima", vehiculo.velocidad))
-        tiempo = distancia / velocidad
-        total_dist += distancia
+        tiempo = conexion.distancia / velocidad
+        total_dist += conexion.distancia
         total_tiempo += tiempo
         total_costo += costo
         dist_acum.append(total_dist)

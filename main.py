@@ -54,6 +54,13 @@ def main():
         VehiculoAereo("Avión de carga"),
         Avioneta(),
     ]
+    # Lista de vehículos básicos (uno por modo)
+    vehiculos_basicos = [
+        VehiculoFerroviario("Tren de carga"),
+        VehiculoAutomotor("Camión estándar"),
+        VehiculoFluvial("Barco fluvial", tipo="fluvial"),
+        VehiculoAereo("Avión de carga"),
+    ]
 
     # Instanciar planificador
     planificador_costo = PlanificadorPorCosto(red, vehiculos)
@@ -92,6 +99,7 @@ def main():
             print("No se encontró un camino válido para esta solicitud.")
 
     # --- GRAFICAR SOLO LOS 5 MEJORES CAMINOS (MENOR COSTO) PARA CADA SOLICITUD ---
+    print("\n--- GRAFICOS CON VEHICULOS BASICOS (UNO POR MODO) ---")
     for s in solicitudes:
         print(f"\nGenerando gráficos para solicitud: {s.origen} -> {s.destino} (peso: {s.peso_kg} kg)")
         caminos = red.buscar_caminos(s.origen, s.destino)
@@ -102,7 +110,7 @@ def main():
         caminos_con_costos = []
         for camino in caminos:
             try:
-                dist_acum, tiempo_acum, costo_acum, vehiculos_usados = calcular_acumulados(camino, vehiculos, s.peso_kg)
+                dist_acum, tiempo_acum, costo_acum, vehiculos_usados = calcular_acumulados(camino, vehiculos_basicos, s.peso_kg)
                 costo_total = costo_acum[-1]
                 caminos_con_costos.append((camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados))
             except Exception as e:
@@ -118,14 +126,14 @@ def main():
         plt.figure(figsize=(12, 6))
         for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados) in enumerate(mejores):
             graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, vehiculos_usados)
-        plt.title(f"Distancia acumulada vs Tiempo acumulado\n{s.origen} -> {s.destino}")
+        plt.title(f"Distancia acumulada vs Tiempo acumulado\n{s.origen} -> {s.destino}\n(Vehículos básicos)")
         plt.tight_layout()
         plt.show()
         # Gráfico 2: Costo acumulado vs Distancia acumulada
         plt.figure(figsize=(12, 6))
         for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados) in enumerate(mejores):
             graficar_costo_vs_distancia(dist_acum, costo_acum, idx, vehiculos_usados)
-        plt.title(f"Costo acumulado vs Distancia acumulada\n{s.origen} -> {s.destino}")
+        plt.title(f"Costo acumulado vs Distancia acumulada\n{s.origen} -> {s.destino}\n(Vehículos básicos)")
         plt.tight_layout()
         plt.show()
 
@@ -160,6 +168,41 @@ def main():
             print(f"Vehículo óptimo por TIEMPO: {vehiculo_tiempo.nombre} (Tiempo: {mostrar_horas_minutos(mejor_tiempo)})")
         else:
             print("No hay vehículo válido para minimizar TIEMPO.")
+
+    # --- GRAFICAR SOLO LOS 5 MEJORES CAMINOS (MENOR COSTO) PARA CADA SOLICITUD ---
+    print("\n--- GRAFICOS CON TODOS LOS VEHICULOS DISPONIBLES ---")
+    for s in solicitudes:
+        print(f"\nGenerando gráficos para solicitud: {s.origen} -> {s.destino} (peso: {s.peso_kg} kg)")
+        caminos = red.buscar_caminos(s.origen, s.destino)
+        if not caminos:
+            print("No hay caminos posibles para esta solicitud.")
+            continue
+        caminos_con_costos = []
+        for camino in caminos:
+            try:
+                dist_acum, tiempo_acum, costo_acum, vehiculos_usados = calcular_acumulados(camino, vehiculos, s.peso_kg)
+                costo_total = costo_acum[-1]
+                caminos_con_costos.append((camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados))
+            except Exception as e:
+                print(f"Camino descartado por error: {e}")
+                continue
+        caminos_con_costos.sort(key=lambda x: x[4])
+        mejores = caminos_con_costos[:5]
+        if not mejores:
+            print("No hay caminos válidos para graficar.")
+            continue
+        plt.figure(figsize=(12, 6))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados) in enumerate(mejores):
+            graficar_distancia_vs_tiempo(dist_acum, tiempo_acum, idx, vehiculos_usados)
+        plt.title(f"Distancia acumulada vs Tiempo acumulado\n{s.origen} -> {s.destino}\n(Todos los vehículos disponibles)")
+        plt.tight_layout()
+        plt.show()
+        plt.figure(figsize=(12, 6))
+        for idx, (camino, dist_acum, tiempo_acum, costo_acum, costo_total, vehiculos_usados) in enumerate(mejores):
+            graficar_costo_vs_distancia(dist_acum, costo_acum, idx, vehiculos_usados)
+        plt.title(f"Costo acumulado vs Distancia acumulada\n{s.origen} -> {s.destino}\n(Todos los vehículos disponibles)")
+        plt.tight_layout()
+        plt.show()
 
 
 def mostrar_horas_minutos(tiempo_horas):
