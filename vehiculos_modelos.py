@@ -1,7 +1,7 @@
 from vehiculos_especializados import VehiculoFerroviario, VehiculoAutomotor, VehiculoFluvial, VehiculoAereo
 
 class Trochita(VehiculoFerroviario):
-    def _init_(self, nombre="Trochita", velocidad_kmh=50, capacidad_kg=10000, costo_base=10, costo_por_km=500, costo_por_kg=2):
+    def __init__(self, nombre="Trochita", velocidad_kmh=50, capacidad_kg=10000, costo_base=10, costo_por_km=500, costo_por_kg=2):
         super()._init_(
             nombre=nombre,
             velocidad_kmh=velocidad_kmh,
@@ -18,7 +18,7 @@ class Trochita(VehiculoFerroviario):
         return self.costo_kg * peso_kg
     
 class Camioneta(VehiculoAutomotor):
-    def _init_(self, nombre="Camioneta", velocidad_kmh=60, capacidad_kg=4000, costo_base=25, costo_por_km=4, costo_por_kg=0.5):
+    def __init__(self, nombre="Camioneta", velocidad_kmh=60, capacidad_kg=4000, costo_base=25, costo_por_km=4, costo_por_kg=0.5):
         super()._init_(
             nombre=nombre,
             velocidad_kmh=velocidad_kmh,
@@ -35,7 +35,7 @@ class Camioneta(VehiculoAutomotor):
         return self.costo_base + (self.costo_km * distancia_km)
 
 class Lancha(VehiculoFluvial):
-    def _init_(self, nombre="Lancha", tipo="fluvial", velocidad_kmh=70, capacidad_kg=2000, costo_por_km=10, costo_por_kg=1.5):
+    def __init__(self, nombre="Lancha", tipo="fluvial", velocidad_kmh=70, capacidad_kg=2000, costo_por_km=10, costo_por_kg=1.5):
         super()._init_(
             nombre=nombre,
             tipo=tipo,
@@ -46,7 +46,7 @@ class Lancha(VehiculoFluvial):
         )
 
 class Avioneta(VehiculoAereo):
-    def _init_(self, nombre="Avioneta", velocidad_kmh=200, capacidad_kg=500, costo_base=400, costo_por_km=20, costo_por_kg=5):
+    def __init__(self, nombre="Avioneta", velocidad_kmh=200, capacidad_kg=500, costo_base=400, costo_por_km=20, costo_por_kg=5):
         super()._init_(
             nombre=nombre,
             velocidad_kmh=velocidad_kmh,
